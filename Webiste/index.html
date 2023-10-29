@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    
+<head>
+    <title>อัปโหลดภาพ</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .form-container {
+            display: inline-block;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        .submit-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .submit-button-container {
+            margin-top: 20px;
+        }
+
+        #uploaded-image {
+            max-width: 100%;
+            height: auto;
+            display: none;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manga Translator</h1>
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*">
+        </form>
+    </div>
+    <div class="submit-button-container">
+        <button class="submit-button" type="button" onclick="submitImage()">Model 1</button>
+        <button class="submit-button" type="button" onclick="submitImageModel_2()">Model 2</button>
+    </div>
+    <img id="uploaded-image" src="" alt="รูปภาพที่อัปโหลด">
+    <script>
+        function showUploadedImage(imageBase64) {
+            const image = document.querySelector('#uploaded-image');
+            image.src = 'data:image/png;base64,' + imageBase64;
+            image.style.display = 'block';
+        }
+        function submitImage() {
+            const input = document.querySelector('input[type="file"]');
+            if (input.files.length === 0) {
+                alert('กรุณาเลือกไฟล์ภาพ');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+
+            fetch(`http://127.0.0.1:5000/uploadModel1`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showUploadedImage(data.image_base64);
+            })
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาด: ' + error);
+            });
+        }
+        function submitImageModel_2() {
+            const input = document.querySelector('input[type="file"]');
+            if (input.files.length === 0) {
+                alert('กรุณาเลือกไฟล์ภาพ');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+
+            fetch(`http://127.0.0.1:5000/uploadModel2`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showUploadedImage(data.image_base64);
+            })
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาด: ' + error);
+            });
+        }
+
+    </script>
+</body>
+</html>
